@@ -365,6 +365,8 @@ mongodb副本集部署
 					```
 					
 					`use admin`会改变shell环境下的`db`变量，`db.getSiblingDB("admin")`只是返回指定的数据库。
+					
+					[mongodb内置角色](https://docs.mongodb.com/manual/reference/built-in-roles/#built-in-roles)
 	
 				7. 验证超级管理员
 		
