@@ -40,6 +40,28 @@ mongodb副本集部署
             
             mongod的启动参数也可单独放在[配置文件](https://docs.mongodb.com/manual/reference/configuration-options/)中，使用[--config](https://docs.mongodb.com/manual/reference/program/mongod/index.html#cmdoption-mongod-config)来引用
             
+            可以参考的配置文件：
+            
+            ```
+            systemLog:
+			  path: /srv/mongodb/rs0-0/log/mongodb.log
+			  destination: file
+			  logAppend: true
+			storage:
+			  dbPath: /srv/mongodb/rs0-0/data
+			  journal:
+			    enabled: true
+			net:
+			  port: 27017
+			replication:
+			  replSetName: rs
+			processManagement:
+			  fork: true
+			  pidFilePath: /srv/mongodb/rs0-0/mongod.pid
+			security:
+			  keyFile: /srv/mongodb/rs0-0/mongod.key
+            ```
+            
             [mongod参数参考](https://docs.mongodb.com/manual/reference/program/mongod/#mongod)
             
         3. 随便连接到一个节点实例，这里选择27017
