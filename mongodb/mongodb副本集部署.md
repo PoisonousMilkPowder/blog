@@ -267,13 +267,7 @@ mongodb副本集部署
     + 使用`--bind_ip`配置一个可供远程客户端连接的ip或主机名，而不是仅仅使用默认的`localhost`
     
         ``` 
-        # 绑定
-        mongod --bind_ip localhost,My-Example-Associated-Hostname
-        
-        #连接
-        mongo --host My-Example-Associated-Hostname
-        # 如果主机 My-Example-Associated-Hostname 与ip 198.51.100.1 关联，还可以写成
-        mongo --host 198.51.100.1
+        测下来只有localhost, 127.0.0.1, 0.0.0.0这些是可以正常启动的
         ```
         
     + 尽可能保证副本集节点数为奇数，如果非要偶数，请添加一个仲裁节点（只参与投票选primary节点，不同步数据），在primary节点的mongo shell里执行`rs.addArb("<hostname><:port>")`添加仲裁节点。
