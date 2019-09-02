@@ -98,6 +98,8 @@ mongodb副本集部署
             ```
 
             记得替换`<hostname>`，我本地配成了`localhost`
+	    
+	    如果需要远程连接，hostname要配成外网ip地址，或者对应的域名
             
             然后执行：
             
@@ -186,6 +188,8 @@ mongodb副本集部署
             use admin
             db.shutdownServer()
             ```
+	    
+	    如果用配置文件启动的，更方便的是使用`mongod --shutdown -f ${configFilePath}`
             
             现在将之前的primary节点关闭后，副本集会自动从剩下的两个secondary节点中选举出一个primary节点。
             
@@ -263,6 +267,8 @@ mongodb副本集部署
     + 副本集节点要部署在不同的机器上，端口最好是27017；
     
     + 建议使用逻辑DNS主机名，而不是直接使用ip，避免ip变化带来的配置更改；
+    
+    + 如果部署在云服务器上且需要远程连接，记得修改安全组配置，放开mongodb端口；
     
     + 使用`--bind_ip`配置一个可供远程客户端连接的ip或主机名，而不是仅仅使用默认的`localhost`
     
@@ -350,8 +356,19 @@ mongodb副本集部署
 					  }
 					)
 					```
+					然后在admin下创建一个集群管理员，需要管理副本集配置的时候，要切此用户验证
+					```
+					admin = db.getSiblingDB("admin")
+					admin.createUser(
+					  {
+					    user: "clusterAdmin",
+					    pwd: "clusterAdmin",
+					    roles: [ { role: "clusterAdmin", db: "admin" } ]
+					  }
+					)
+					```
 					
-					我为了方便直接创建了一个root用户
+					我为了方便直接创建了一个root用户（不建议）
 					
 					```
 					use admin
@@ -373,18 +390,19 @@ mongodb副本集部署
 					`mongo -u "admin" -p "admin" --authenticationDatabase "admin"`
 		
 				8. 为其他数据库创建用户
-
+					
+					这里为home创建了一个拥有dbOwner权限的角色。实际情况中可按需求创建只读只写等更加细化的权限。
 					```
 					db.getSiblingDB("home").createUser(
 					  {
 					    "user" : "home",
 					    "pwd" : "home",
-					    roles: [ { "role" : "dbAdmin", "db" : "home" } ]
+					    roles: [ { "role" : "dbOwner", "db" : "home" } ]
 					  }
 					)
 					```
 					
-					`roles`字段也可写成`[ "dbAdmin" ]`，也就是没指定数据库，此时以调用`createUser() `的数据库为准，比如此处是home。
+					`roles`字段也可写成`[ "dbOwner" ]`，也就是没指定数据库，此时以调用`createUser() `的数据库为准，比如此处是home。
 					
 					`mongoose`连接`home`数据库的时候就得把用户名密码带上了
 					
